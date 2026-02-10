@@ -1,0 +1,14 @@
+# Regeneratable / cache — exclude when syncing to remote
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.eggs/
+*.egg-info/
+*.egg
+build/
+dist/
+results/

@@ -1,0 +1,26 @@
+[project]
+name = "seed-voken"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "<3.12,>=3.8"
+dependencies = [
+    "academictorrents",
+    "albumentations==1.4.4",
+    "av>=12.3.0",
+    "einops>=0.8.1",
+    "eva-decord>=0.6.1",
+    "jsonargparse[signatures]>=4.27.7",
+    "lightning==2.2.0",
+    "lpips>=0.1.4",
+    "matplotlib>=3.7.5",
+    "numpy<2",
+    "omegaconf>=2.3.0",
+    "requests>=2.32.4",
+    "setuptools<70.0.0",
+    "tensorboard>=2.14.0",
+    "tensorboardx>=2.6.2.2",
+    "torch>=2.4.0",
+    "torchvision>=0.19.0",
+    "transformers==4.37.2",
+]
