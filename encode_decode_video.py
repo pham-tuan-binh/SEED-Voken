@@ -66,12 +66,13 @@ def load_video_frames(path: str, max_frames: int = None):
     n = len(vr)
     if n == 0:
         raise RuntimeError(f"Video has no frames: {path}")
+    fps = vr.get_avg_fps()
     if max_frames is not None and n > max_frames:
         indices = np.linspace(0, n - 1, max_frames, dtype=int)
     else:
         indices = np.arange(n)
     frames = vr.get_batch(indices).asnumpy()  # (T, H, W, C) uint8
-    return frames
+    return frames, fps
 
 
 def preprocess_frames(frames: np.ndarray, resolution: int = RESOLUTION) -> torch.Tensor:
@@ -125,7 +126,8 @@ def main():
                         help="Video checkpoint path")
     parser.add_argument("--max-frames", type=int, default=None,
                         help="Max frames to process (default: all)")
-    parser.add_argument("--fps", type=float, default=24.0, help="FPS for output video")
+    parser.add_argument("--fps", type=float, default=None,
+                        help="FPS for output video (default: same as input)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.video):
@@ -145,12 +147,13 @@ def main():
     print(f"Using device: {DEVICE}", flush=True)
     print("Loading video...", flush=True)
     try:
-        frames = load_video_frames(args.video, max_frames=args.max_frames)
+        frames, source_fps = load_video_frames(args.video, max_frames=args.max_frames)
     except Exception as e:
         print(f"Error loading video: {e}", flush=True)
         raise
     T = frames.shape[0]
-    print(f"Frames: {T}", flush=True)
+    fps = args.fps if args.fps is not None else source_fps
+    print(f"Frames: {T}  Source FPS: {source_fps:.2f}  Output FPS: {fps:.2f}", flush=True)
     if T == 0:
         sys.exit("No frames in video.")
 
@@ -217,7 +220,7 @@ def main():
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)) or ".", exist_ok=True)
     t_save = time.perf_counter()
-    write_video_av(out_path, out_frames, fps=args.fps)
+    write_video_av(out_path, out_frames, fps=fps)
     print(f"Saved reconstructed video to {out_path} (write: {time.perf_counter() - t_save:.2f} s)")
 
 

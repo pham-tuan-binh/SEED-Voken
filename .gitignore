@@ -1,2 +1,4 @@
 *.ckpt
 checkpoints/
+.env.local
+*.mp4
